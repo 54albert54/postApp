@@ -12,7 +12,7 @@ export function Home({ navigation }) {
     <View
     style={tw`w-full max-w-[430px] mx-auto   h-full flex flex-col border border-black  justify-center bg-blue-200 dark:bg-blue-600 gap-4 items-center `}
   >
-    <Text>Bienvendio a mi app</Text>
+    <Text>Bienvendio a mi appss</Text>
     <View
       style={tw.style("    flex flex-row gap-10 justify-center items-center")}
     >
@@ -30,7 +30,9 @@ export function Home({ navigation }) {
     <Button
       title="Back"
       onPress={() => {
-        navigation.navigate('User')
+         navigation.navigate('User')
+        // navigation.openDrawer();
+   
       }}
     />
   </View>

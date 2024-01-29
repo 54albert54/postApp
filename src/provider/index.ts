@@ -8,3 +8,14 @@ export const categories = [
   { name: "Hot drink", icon: "mug-hot",color:'#de451d' },
   { name: "Other", icon: "candy-cane",color:'#396433' },
 ];
+
+export enum COLOR {
+  BASIC = '#fbf5eb',
+  SHADOW = '#8a969c',
+  MAIN= '#a03659',
+  MAIN2='#A0262f',
+  HOVER = '#340e0f',
+  BACKGROUND_MOVIL= '#f2f2f2'
+
+
+}
