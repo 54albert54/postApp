@@ -18,12 +18,14 @@ import api from "../../api/api";
 import { TPost, TUser } from "../../provider/schema";
 import Context, { TContext } from "../../provider/context";
 import LikePost from "../../components/LikePost";
+import CreatePostBoton from "../../components/CreatePostBoton";
 const imgPerfil = 'https://imgs.search.brave.com/0JdzpeiLxCY4_XJt2LAysFTcum_hG5NKJmY5HgvHAcM/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9jZG4t/aWNvbnMtcG5nLmZy/ZWVwaWsuY29tLzEy/OC8xMjUzOC8xMjUz/ODQ0NC5wbmc'
 const stile = `text-red-600 text-xl`;
 const BlogsDetail = (Props: any) => {
   const {auth }: TContext = Context();
   const [post, setPost] = React.useState<TPost | null>();
   const { navigation, route } = Props;
+  const isOwnPost = auth?.showData?.id == post?.owner_id
   React.useEffect(() => {
     
     (async () => {
@@ -32,6 +34,10 @@ const BlogsDetail = (Props: any) => {
       });
     })();
   }, []);
+
+  const changePage = ()=>{
+    navigation.navigate('createPost',{params:{...post,isOwnPost}})
+  }
 
   return (
     <View style={tw`relative h-full pt-10 px-5 mb-20 w-full flex items-center bg-blue-300`}>
@@ -44,10 +50,15 @@ const BlogsDetail = (Props: any) => {
         {
           auth.showData && <LikePost/>
         }
-        <View style={tw`flex items-center gap-1`}>
-          <Text style={tw`font-semibold`}>{auth?.showData?.id == post?.owner_id?'editar ':' escrito por' }:</Text>
+        {
+          isOwnPost ? <CreatePostBoton title='Edit' changePage={changePage} />:(
+            <View style={tw`flex items-center gap-1`}>
+          <Text style={tw`font-semibold`}>{isOwnPost?'editar ':' escrito por' }:</Text>
           <Text>{post?.owner_name}</Text>
         </View>
+          )
+        }
+        
          
         <View>
         <Text>hola</Text>
@@ -61,3 +72,5 @@ const BlogsDetail = (Props: any) => {
 };
 
 export default BlogsDetail;
+
+// 

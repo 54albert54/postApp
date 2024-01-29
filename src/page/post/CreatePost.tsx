@@ -7,25 +7,47 @@ import axios from 'axios';
 import api from '../../api/api';
 import Context, { TContext } from '../../provider/context';
 import tw from 'twrnc'
+import { useFocusEffect } from '@react-navigation/native';
 
-const initialValue = () => ({
+const initialValue = (value:any) => ({
   // Define las propiedades iniciales del formulario
-  title: "",
-  detail: "",
+  title: value.title,
+  detail: value.detail,
 });
-const ValidationSchema = () => {
-  return {
-    title: Yup.string().required("Debes de tener un titulo."),
-    detail: Yup.string().required("Debes de tener de que hablaras."),
-  };
-};
-const CreatePost =({navigation})=>{
+
+const CreatePost =(Props: any)=>{
+  const { navigation, route } = Props;
   const {auth}: TContext = Context();
+  const [isOwn , setIsOwn] = React.useState(false)
   const [error, setError] = React.useState("");
   const [value, onChangeText] = React.useState({ title: "", detail: "" });
 
+  const titleMjs = isOwn?'Edita el titulo.':"Debes de tener un titulo."
+  const detailMjs = isOwn?'Edita el mensaje.':"Debes de tener de que hablaras."
+  const ValidationSchema = () => {
+    return {
+      title: Yup.string().required(titleMjs),
+      detail: Yup.string().required(detailMjs),
+    };
+  };
+
+  useFocusEffect(
+    React.useCallback(()=>{
+      if (route?.params?.params){
+        setIsOwn(route.params.params.isOwnPost)
+      onChangeText({
+        title:route.params.params.title,
+        detail:route.params.params.detail 
+      })
+    }
+    
+    },[]) 
+ )
+
+
+
   const formik = useFormik({
-    initialValues: initialValue(),
+    initialValues: initialValue(value),
     validationSchema: Yup.object(ValidationSchema()),
     validateOnChange: false,
     onSubmit: (values) => {
@@ -33,8 +55,8 @@ const CreatePost =({navigation})=>{
       onChangeText({ detail, title });
       (async()=>{
         axios({
-          method: "post",
-          url: api.apiPost.getAllPost(),
+          method: isOwn?"put":"post",
+          url:isOwn?api.apiPost.getPostID(route.params.params.id) :api.apiPost.getAllPost(),
           headers:{
             'Authorization': `Bearer ${auth.token}`,
           },
@@ -44,13 +66,13 @@ const CreatePost =({navigation})=>{
           },
         })
           .then((data) => {
-            navigation.goBack();
-            console.log('value',values);
+            isOwn?navigation.navigate('HomeBlogs'):navigation.goBack();
           })
           .catch((err) => console.log("hey error " + err));
       })()
     },
   });
+
 
 
   return(
@@ -61,8 +83,11 @@ const CreatePost =({navigation})=>{
       maxLength={40}
       autoCapitalize="none"
       style={styles.input}
-      value={formik.values.title}
-      onChangeText={(text) => formik.setFieldValue("title", text)}
+      value={value.title}
+      onChangeText={(text) => {
+        formik.setFieldValue("title", text)
+        onChangeText({...value,title:text})
+      }}
     />
     <TextInput
       placeholder="detail"
@@ -73,8 +98,11 @@ const CreatePost =({navigation})=>{
         numberOfLines={4}
         maxLength={40}
       style={styles.inputText}
-      value={formik.values.detail}
-      onChangeText={(text) => formik.setFieldValue("detail", text)}
+      value={value.detail}
+      onChangeText={(text) => {
+        formik.setFieldValue("detail", text)
+        onChangeText({...value,detail:text})
+      }}
     />
     <View style={tw` flex flex-row justify-between px-20 mt-20`}>
     <Button
@@ -93,8 +121,8 @@ const CreatePost =({navigation})=>{
    
    
     <View style={styles.errorContainer}>
-      <Text style={styles.errors}>{formik.errors.title}</Text>
-      <Text style={styles.errors}>{formik.errors.detail}</Text>
+      <Text style={styles.errors}>{formik.errors?.title}</Text>
+      <Text style={styles.errors}>{formik.errors?.detail}</Text>
       <Text style={styles.errors}>{error}</Text>
     </View>
   

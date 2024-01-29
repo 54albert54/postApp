@@ -2,13 +2,13 @@ import { Button, StyleSheet, Text, View , Image , RootTagContext , TouchableWith
 import tw from 'twrnc'
 import { COLOR } from '../provider';
 
-const CreatePostBoton =({changePage})=>{
+const CreatePostBoton =({changePage,title})=>{
 
   return(
-    <View style={tw`w-full h-16 flex justify-center items-center`}>
+    <View style={tw` h-16 flex justify-center items-center`}>
     <TouchableWithoutFeedback onPress={changePage}>
     <View style={tw`bg-[${COLOR.SHADOW}] px-8  py-3 rounded-xl`} >
-      <Text style={tw`font-semibold text-white text-xl`}>CreatePost </Text>
+      <Text style={tw`font-semibold text-white text-xl`}>{title} </Text>
     </View>
     </TouchableWithoutFeedback>
     </View>

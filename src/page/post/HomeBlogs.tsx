@@ -45,7 +45,7 @@ const HomeBlogs =({navigation})=>{
       </ScrollView>
       </View>
       {
-       auth  && <CreatePostBoton changePage={changePage} />
+       auth  && <CreatePostBoton title={'Create Post'} changePage={changePage} />
       }
    
     </SafeAreaView>
